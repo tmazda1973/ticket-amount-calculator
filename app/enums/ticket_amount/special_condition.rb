@@ -1,15 +1,17 @@
-module TicketAmountCalculator
+module TicketAmount
   #
-  # チケット種別を表す列挙型です。
+  # チケット販売の特別条件を表す列挙型です。
   #
-  module TicketType
-    NORMAL = 1 # 通常
-    SPECIAL = 2 # 特別
+  module SpecialCondition
+    EVENING = 1 # 夕方料金
+    HOLIDAY = 2 # 休日料金
+    MON_WED = 3 # 月水割引
 
     # 論理名
     ENUM_NAMES = {
-      NORMAL => '通常',
-      SPECIAL => '特別',
+      EVENING => '夕方料金',
+      HOLIDAY => '休日料金',
+      MON_WED => '月水割引'
     }.freeze
 
     class << self

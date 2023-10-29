@@ -1,7 +1,7 @@
 require_relative './ticket_amount_const'
-require_relative '../../enums/ticket_amount_calculator/ticket_type'
+require_relative '../../enums/ticket_amount/ticket_type'
 
-module TicketAmountCalculator
+module TicketAmount
   #
   # 金額変更前合計金額の値オブジェクトです。
   #
@@ -36,13 +36,13 @@ module TicketAmountCalculator
       when TicketType::SPECIAL # 特別
         total_amount =
           @adult_ticket_count * self::ADULT_TICKET_PRICE_SPECIAL +
-          @child_ticket_count * self::CHILD_TICKET_PRICE_SPECIAL +
-          @senior_ticket_count * self::SENIOR_TICKET_PRICE_SPECIAL
+            @child_ticket_count * self::CHILD_TICKET_PRICE_SPECIAL +
+            @senior_ticket_count * self::SENIOR_TICKET_PRICE_SPECIAL
       else # 通常
         total_amount =
           @adult_ticket_count * self::ADULT_TICKET_PRICE +
-          @child_ticket_count * self::CHILD_TICKET_PRICE +
-          @senior_ticket_count * self::SENIOR_TICKET_PRICE
+            @child_ticket_count * self::CHILD_TICKET_PRICE +
+            @senior_ticket_count * self::SENIOR_TICKET_PRICE
       end
       total_amount
     end
