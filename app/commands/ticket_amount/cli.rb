@@ -1,5 +1,6 @@
 require 'thor'
 require_relative '../../use_cases/ticket_amount/calculate_use_case'
+require_relative '../../presenters/ticker_amount/calculate_presenter'
 require_relative '../../enums/ticket_amount/ticket_type'
 
 module TicketAmount
@@ -7,11 +8,23 @@ module TicketAmount
   # チケットの販売金額に関するコマンド群です。
   #
   class CLI < Thor
+    class << self
+      #
+      # エラー発生時にコマンドを終了するかを判定します。
+      # @return [Boolean] true 終了する, false 終了しない
+      # @classmethod
+      #
+      def exit_on_failure?
+        true
+      end
+    end
+
     desc 'calculate', 'チケットの販売金額を計算します。'
-    method_option :type, type: :numeric, desc: '販売種別', banner: '1:通常(デフォルト), 2:特別'
+    method_option :type, type: :numeric, desc: '販売種別', required: true, banner: '1:通常, 2:特別'
     def calculate
       presenter = CalculatePresenter.new
       presenter.ticket_type = options[:type] || TicketType::NORMAL # 販売種別
+      puts "販売種別: #{TicketType::name(presenter.ticket_type)}"
       # 対話形式で入力を受け付ける
       presenter.adult_ticket_count = self._input_adult_ticket_count # チケット枚数（大人）
       presenter.child_ticket_count = self._input_child_ticket_count # チケット枚数（子供）
@@ -28,12 +41,13 @@ module TicketAmount
     # @private
     #
     def _input_adult_ticket_count
-      prompt = 'チケット枚数(大人): '
-      error_message = '入力値に誤りがあります。再入力してください。'
+      prompt = 'チケット枚数(大人) [数字]:'
+      error_message = '入力値に誤りがあります。再入力してください。(コマンド終了: Q|q)'
       input = ask(prompt)
-      until input =~ /^[0-9]+$/
-        print error_message
+      until input =~ /^[1-9]\d*$/
+        puts error_message
         input = ask(prompt)
+        exit(0) if input.downcase == 'q'
       end
       input
     end
@@ -44,12 +58,13 @@ module TicketAmount
     # @private
     #
     def _input_child_ticket_count
-      prompt = 'チケット枚数(子供): '
-      error_message = '入力値に誤りがあります。再入力してください。'
+      prompt = 'チケット枚数(子供) [数字]:'
+      error_message = '入力値に誤りがあります。再入力してください。(コマンド終了: Q|q)'
       input = ask(prompt)
-      until input =~ /^[0-9]+$/
-        print error_message
+      until input =~ /^[1-9]\d*$/
+        puts error_message
         input = ask(prompt)
+        exit(0) if input.downcase == 'q'
       end
       input
     end
@@ -60,12 +75,13 @@ module TicketAmount
     # @private
     #
     def _input_senior_ticket_count
-      prompt = 'チケット枚数(シニア): '
-      error_message = '入力値に誤りがあります。再入力してください。'
+      prompt = 'チケット枚数(シニア) [数字]: '
+      error_message = '入力値に誤りがあります。再入力してください。(コマンド終了: Q|q)'
       input = ask(prompt)
-      until input =~ /^[0-9]+$/
-        print error_message
+      until input =~ /^[1-9]\d*$/
+        puts error_message
         input = ask(prompt)
+        exit(0) if input.downcase == 'q'
       end
       input
     end
