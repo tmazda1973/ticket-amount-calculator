@@ -25,9 +25,9 @@ module TicketAmount
       special_conditions: []
     )
       @ticket_type = ticket_type
-      @adult_ticket_count = adult_ticket_count
-      @child_ticket_count = child_ticket_count
-      @senior_ticket_count = senior_ticket_count
+      @adult_count = adult_ticket_count
+      @child_count = child_ticket_count
+      @senior_count = senior_ticket_count
       @special_conditions = special_conditions
     end
 

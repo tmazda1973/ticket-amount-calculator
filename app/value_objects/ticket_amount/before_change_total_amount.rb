@@ -22,9 +22,9 @@ module TicketAmount
       senior_ticket_count: 0
     )
       @ticket_type = ticket_type
-      @adult_ticket_count = adult_ticket_count
-      @child_ticket_count = child_ticket_count
-      @senior_ticket_count = senior_ticket_count
+      @adult_count = adult_ticket_count
+      @child_count = child_ticket_count
+      @senior_count = senior_ticket_count
     end
 
     #
@@ -32,9 +32,8 @@ module TicketAmount
     # @return [Integer,BigDecimal] 金額変更前合計金額
     #
     def value
-      self.calc_adult_ticket_amount(@ticket_type, @adult_ticket_count) +
-        self.calc_child_ticket_amount(@ticket_type, @child_ticket_count) +
-        self.calc_senior_ticket_amount(@ticket_type, @senior_ticket_count)
+      ticket_counts = self.build_ticket_counts(@adult_count, @child_count, @senior_count)
+      self.calc_total_amount(@ticket_type, ticket_counts)
     end
   end
 end

@@ -24,9 +24,9 @@ module TicketAmount
       special_conditions: []
     )
       @ticket_type = ticket_type
-      @adult_ticket_count = adult_ticket_count
-      @child_ticket_count = child_ticket_count
-      @senior_ticket_count = senior_ticket_count
+      @adult_count = adult_ticket_count
+      @child_count = child_ticket_count
+      @senior_count = senior_ticket_count
       @special_conditions = special_conditions
     end
 
@@ -35,17 +35,9 @@ module TicketAmount
     # @return [Integer,BigDecimal] 販売合計金額
     #
     def value
-      # 合計金額を算出する
-      total_amount =
-        self.calc_adult_ticket_amount(@ticket_type, @adult_ticket_count) +
-          self.calc_child_ticket_amount(@ticket_type, @child_ticket_count) +
-          self.calc_senior_ticket_amount(@ticket_type, @senior_ticket_count)
-      # 条件によって料金を変更する
-      self.change_amount_by_special(
-        total_amount,
-        @special_conditions,
-        self.build_ticket_counts(@adult_ticket_count, @child_ticket_count, @senior_ticket_count)
-      )
+      ticket_counts = self.build_ticket_counts(@adult_count, @child_count, @senior_count)
+      total_amount = self.calc_total_amount(@ticket_type, ticket_counts)
+      self.change_amount_by_special(total_amount, @special_conditions, ticket_counts)
     end
   end
 end

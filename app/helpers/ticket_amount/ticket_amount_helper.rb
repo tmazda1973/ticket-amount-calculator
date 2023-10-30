@@ -10,6 +10,19 @@ module TicketAmount
     include TicketAmountConst
 
     #
+    # チケットの合計金額を算出します。
+    # @param ticket_type [Integer] チケット種別
+    # @param ticket_counts [Hash<Symbol>] チケット枚数情報
+    # @return [Integer,BigDecimal] 合計金額
+    #
+    def calc_total_amount(ticket_type, ticket_counts)
+      adult, child, senior = self._parse_ticket_counts(ticket_counts)
+      self.calc_adult_ticket_amount(ticket_type, adult) +
+        self.calc_child_ticket_amount(ticket_type, child) +
+        self.calc_senior_ticket_amount(ticket_type, senior)
+    end
+
+    #
     # チケット(大人)の単価を取得します。
     # @param type [Integer] チケット種別
     # @return [Integer,BigDecimal] 単価
