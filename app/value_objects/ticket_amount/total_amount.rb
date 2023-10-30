@@ -75,6 +75,16 @@ module TicketAmount
     end
 
     #
+    # チケット枚数の合計を算出します。
+    # @param ticket_counts [Hash<Symbol>] チケット枚数
+    # @return [Integer] チケット枚数の合計
+    # @private
+    #
+    def _calc_ticket_total_count(ticket_counts)
+      ticket_counts[:adult] + ticket_counts[:child] + ticket_counts[:senior]
+    end
+
+    #
     # 特別条件を適用します。
     # @param total_amount [Integer,BigDecimal] 合計金額
     # @param special_conditions [Array] 特別条件
@@ -84,7 +94,7 @@ module TicketAmount
     #
     def _apply_special_conditions(total_amount, special_conditions, ticket_counts)
       _total_amount = total_amount # 合計金額
-      total_count = ticket_counts[:adult] + ticket_counts[:child] + ticket_counts[:senior] # チケット合計枚数
+      total_count = self._calc_ticket_total_count(ticket_counts[:adult])
       # 夕方料金
       if special_conditions.include?(SpecialCondition::EVENING)
         _total_amount -= self::EVENING_DISCOUNT_PRICE * total_count
