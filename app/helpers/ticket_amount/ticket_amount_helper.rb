@@ -1,5 +1,6 @@
 require_relative '../../value_objects/ticket_amount/ticket_amount_const'
 require_relative '../../enums/ticket_amount/ticket_type'
+require_relative '../../enums/ticket_amount/special_condition'
 
 #
 # チケット金額に関する処理を提供するヘルパーモジュールです。
@@ -75,6 +76,110 @@ module TicketAmount
     #
     def calc_senior_ticket_amount(type, count)
       self.senior_ticket_price(type) * count
+    end
+
+    #
+    # 特別条件による金額変更を適用します。
+    # @param total_amount [Integer,BigDecimal] 合計金額
+    # @param special_conditions [Array] 特別条件
+    # @param ticket_counts [Hash<Symbol>] チケット枚数
+    # @return [Integer,BigDecimal] 適用後の合計金額
+    #
+    def change_amount_by_special(total_amount, special_conditions, ticket_counts)
+      _total_amount = self.apply_group_discount(total_amount, ticket_counts) # 団体割引
+      self.apply_special_conditions(_total_amount, special_conditions, ticket_counts) # 特別条件
+      _total_amount
+    end
+
+    #
+    # 団体割引を適用します。
+    # @param total_amount [Integer,BigDecimal] 合計金額
+    # @param ticket_counts [Hash<Symbol>] チケット枚数
+    # @return [Integer,BigDecimal] 適用後の合計金額
+    #
+    def apply_group_discount(total_amount, ticket_counts)
+      _total_amount = total_amount
+      if self.group_discount?(ticket_counts)
+        _total_amount = (_total_amount * GROUP_DISCOUNT_RATE).floor
+      end
+      _total_amount
+    end
+
+    #
+    # 特別条件を適用します。
+    # @param total_amount [Integer,BigDecimal] 合計金額
+    # @param special_conditions [Array] 特別条件
+    # @param ticket_counts [Hash<Symbol>] チケット枚数
+    # @return [Integer,BigDecimal] 適用後の合計金額
+    #
+    def apply_special_conditions(total_amount, special_conditions, ticket_counts)
+      _total_amount = total_amount # 合計金額
+      total_count = self._calc_ticket_total_count(ticket_counts)
+      # 夕方料金
+      if special_conditions.include?(SpecialCondition::EVENING)
+        _total_amount -= EVENING_DISCOUNT_PRICE * total_count
+      end
+      # 休日料金
+      if special_conditions.include?(SpecialCondition::HOLIDAY)
+        _total_amount += HOLIDAY_EXTRA_PRICE * total_count
+      end
+      # 月水割引
+      if special_conditions.include?(SpecialCondition::MON_WED)
+        _total_amount -= MON_WED_DISCOUNT_PRICE * total_count
+      end
+      _total_amount
+    end
+
+    #
+    # 団体割引であるかを判定します。
+    # @param ticket_counts [Hash<Symbol>] チケット枚数情報
+    # @return true 団体割引である, false 団体割引ではない
+    #
+    def group_discount?(ticket_counts)
+      adult, child, senior = self._parse_ticket_counts(ticket_counts)
+      ticket_total_count = adult + (child * CHILD_TICKET_WEIGHT) + senior
+      ticket_total_count.floor >= GROUP_DISCOUNT_THRESHOLD
+    end
+
+    #
+    # チケット枚数情報を構築します。
+    # @param adult_count [Integer] チケット枚数（大人）
+    # @param child_count [Integer] チケット枚数（子供）
+    # @param senior_count [Integer] チケット枚数（シニア）
+    # @return [Hash<Symbol>] チケット枚数情報
+    #
+    def build_ticket_counts(adult_count, child_count, senior_count)
+      {
+        adult: adult_count,
+        child: child_count,
+        senior: senior_count
+      }
+    end
+
+    private
+    #
+    # チケット枚数情報を解析します。
+    # @param ticket_counts [Hash<Symbol>] チケット枚数情報
+    # @return [Array<Integer>] 解析後のチケット枚数情報
+    # @private
+    #
+    def _parse_ticket_counts(ticket_counts)
+      [
+        ticket_counts.fetch(:adult, 0).to_i,
+        ticket_counts.fetch(:child, 0).to_i,
+        ticket_counts.fetch(:senior, 0).to_i
+      ]
+    end
+
+    #
+    # チケット枚数の合計を算出します。
+    # @param ticket_counts [Hash<Symbol>] チケット枚数情報
+    # @return [Integer] チケット枚数の合計
+    # @private
+    #
+    def _calc_ticket_total_count(ticket_counts)
+        adult, child, senior = self._parse_ticket_counts(ticket_counts)
+        adult + child + senior
     end
   end
 end

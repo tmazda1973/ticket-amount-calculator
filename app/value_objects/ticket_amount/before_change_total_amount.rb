@@ -1,12 +1,12 @@
-require_relative './ticket_amount_const'
 require_relative '../../enums/ticket_amount/ticket_type'
+require_relative '../../helpers/ticket_amount/ticket_amount_helper'
 
 module TicketAmount
   #
   # 金額変更前合計金額の値オブジェクトです。
   #
   class BeforeChangeTotalAmount
-    include TicketAmountConst
+    include TicketAmountHelper
 
     #
     # コンストラクタ
@@ -29,22 +29,12 @@ module TicketAmount
 
     #
     # 金額変更前合計金額を取得します。
-    # @return [Integer] 金額変更前合計金額
+    # @return [Integer,BigDecimal] 金額変更前合計金額
     #
     def value
-      case @ticket_type
-      when TicketType::SPECIAL # 特別
-        total_amount =
-          @adult_ticket_count * ADULT_TICKET_PRICE_SPECIAL +
-            @child_ticket_count * CHILD_TICKET_PRICE_SPECIAL +
-            @senior_ticket_count * SENIOR_TICKET_PRICE_SPECIAL
-      else # 通常
-        total_amount =
-          @adult_ticket_count * ADULT_TICKET_PRICE +
-            @child_ticket_count * CHILD_TICKET_PRICE +
-            @senior_ticket_count * SENIOR_TICKET_PRICE
-      end
-      total_amount
+      self.calc_adult_ticket_amount(@ticket_type, @adult_ticket_count) +
+        self.calc_child_ticket_amount(@ticket_type, @child_ticket_count) +
+        self.calc_senior_ticket_amount(@ticket_type, @senior_ticket_count)
     end
   end
 end
