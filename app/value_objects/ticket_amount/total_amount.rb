@@ -39,14 +39,14 @@ module TicketAmount
       case @ticket_type
       when TicketType::SPECIAL # 特別
         total_amount =
-          @adult_ticket_count * self::ADULT_TICKET_PRICE_SPECIAL +
-            @child_ticket_count * self::CHILD_TICKET_PRICE_SPECIAL +
-            @senior_ticket_count * self::SENIOR_TICKET_PRICE_SPECIAL
+          @adult_ticket_count * ADULT_TICKET_PRICE_SPECIAL +
+            @child_ticket_count * CHILD_TICKET_PRICE_SPECIAL +
+            @senior_ticket_count * SENIOR_TICKET_PRICE_SPECIAL
       else # 通常
         total_amount =
-          @adult_ticket_count * self::ADULT_TICKET_PRICE +
-            @child_ticket_count * self::CHILD_TICKET_PRICE +
-            @senior_ticket_count * self::SENIOR_TICKET_PRICE
+          @adult_ticket_count * ADULT_TICKET_PRICE +
+            @child_ticket_count * CHILD_TICKET_PRICE +
+            @senior_ticket_count * SENIOR_TICKET_PRICE
       end
       # 条件によって料金を変更する
       ticket_counts = {
@@ -69,7 +69,7 @@ module TicketAmount
     def _apply_group_discount(total_amount, ticket_counts)
       _total_amount = total_amount
       if self._group_discount?(ticket_counts)
-        _total_amount = (_total_amount * self::GROUP_DISCOUNT_RATE).floor
+        _total_amount = (_total_amount * GROUP_DISCOUNT_RATE).floor
       end
       _total_amount
     end
@@ -94,18 +94,18 @@ module TicketAmount
     #
     def _apply_special_conditions(total_amount, special_conditions, ticket_counts)
       _total_amount = total_amount # 合計金額
-      total_count = self._calc_ticket_total_count(ticket_counts[:adult])
+      total_count = self._calc_ticket_total_count(ticket_counts)
       # 夕方料金
       if special_conditions.include?(SpecialCondition::EVENING)
-        _total_amount -= self::EVENING_DISCOUNT_PRICE * total_count
+        _total_amount -= EVENING_DISCOUNT_PRICE * total_count
       end
       # 休日料金
       if special_conditions.include?(SpecialCondition::HOLIDAY)
-        _total_amount += self::HOLIDAY_EXTRA_PRICE * total_count
+        _total_amount += HOLIDAY_EXTRA_PRICE * total_count
       end
       # 月水割引
       if special_conditions.include?(SpecialCondition::MON_WED)
-        _total_amount -= self::MON_WED_DISCOUNT_PRICE * total_count
+        _total_amount -= MON_WED_DISCOUNT_PRICE * total_count
       end
       _total_amount
     end
@@ -119,9 +119,9 @@ module TicketAmount
     def _group_discount?(ticket_counts)
       ticket_total_count =
         ticket_counts[:adult] +
-          (ticket_counts[:child] * self::CHILD_TICKET_WEIGHT) +
+          (ticket_counts[:child] * CHILD_TICKET_WEIGHT) +
           ticket_counts[:senior]
-      ticket_total_count.floor >= self::GROUP_DISCOUNT_THRESHOLD
+      ticket_total_count.floor >= GROUP_DISCOUNT_THRESHOLD
     end
   end
 end

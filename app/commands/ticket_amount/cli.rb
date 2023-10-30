@@ -37,7 +37,7 @@ module TicketAmount
       lazy_default: TicketType::NORMAL,
       banner: '1:通常, 2:特別'
     def calculate
-      presenter = CalculatePresenter.new
+      presenter = CalculatePresenter.new(self)
       presenter.ticket_type = options[:type] || TicketType::NORMAL # 販売種別
       self.echo_hr
       self.say("チケットの販売金額を計算します。")

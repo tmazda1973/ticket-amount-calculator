@@ -13,6 +13,7 @@ module TicketAmount
       HOLIDAY => '休日料金',
       MON_WED => '月水割引'
     }.freeze
+    private_constant :ENUM_NAMES
 
     class << self
       #

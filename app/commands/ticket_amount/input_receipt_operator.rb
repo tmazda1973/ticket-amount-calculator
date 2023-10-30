@@ -40,7 +40,7 @@ module TicketAmount
         input = cli.ask(prompt)
         cli.send(:exit, 0) if input.downcase == 'q'
       end
-      input
+      input.to_i
     end
 
     #
@@ -58,7 +58,7 @@ module TicketAmount
         input = cli.ask(prompt)
         cli.send(:exit, 0) if input.downcase == 'q'
       end
-      input
+      input.to_i
     end
 
     #
@@ -76,7 +76,7 @@ module TicketAmount
         input = cli.ask(prompt)
         cli.send(:exit, 0) if input.downcase == 'q'
       end
-      input
+      input.to_i
     end
 
     #
@@ -86,7 +86,6 @@ module TicketAmount
     # @private
     #
     def _input_special_conditions(cli)
-      values = [] # 入力値
       prompt = <<-PROMPT
 特別条件を入力してください。カンマ区切りで複数入力できます。(例: 1,2,3)
   1: 夕方料金
@@ -102,7 +101,7 @@ module TicketAmount
         input = cli.ask(prompt)
         cli.send(:exit, 0) if input.downcase == 'q'
       end
-      values
+      input.split(',').map(&:to_i)
     end
 
     #
@@ -114,6 +113,7 @@ module TicketAmount
     def _valid_special_conditions(input)
       allow_values = SpecialCondition.all # 許可する入力値
       input.split(',').each do |value|
+        return false unless value =~ /^(0)|([1-9]\d*)$/
         return false unless allow_values.include?(value.to_i)
       end
       true

@@ -35,14 +35,14 @@ module TicketAmount
       case @ticket_type
       when TicketType::SPECIAL # 特別
         total_amount =
-          @adult_ticket_count * self::ADULT_TICKET_PRICE_SPECIAL +
-            @child_ticket_count * self::CHILD_TICKET_PRICE_SPECIAL +
-            @senior_ticket_count * self::SENIOR_TICKET_PRICE_SPECIAL
+          @adult_ticket_count * ADULT_TICKET_PRICE_SPECIAL +
+            @child_ticket_count * CHILD_TICKET_PRICE_SPECIAL +
+            @senior_ticket_count * SENIOR_TICKET_PRICE_SPECIAL
       else # 通常
         total_amount =
-          @adult_ticket_count * self::ADULT_TICKET_PRICE +
-            @child_ticket_count * self::CHILD_TICKET_PRICE +
-            @senior_ticket_count * self::SENIOR_TICKET_PRICE
+          @adult_ticket_count * ADULT_TICKET_PRICE +
+            @child_ticket_count * CHILD_TICKET_PRICE +
+            @senior_ticket_count * SENIOR_TICKET_PRICE
       end
       total_amount
     end

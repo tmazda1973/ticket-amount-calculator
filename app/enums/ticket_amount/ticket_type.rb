@@ -11,6 +11,7 @@ module TicketAmount
       NORMAL => '通常',
       SPECIAL => '特別',
     }.freeze
+    private_constant :ENUM_NAMES
 
     class << self
       #
