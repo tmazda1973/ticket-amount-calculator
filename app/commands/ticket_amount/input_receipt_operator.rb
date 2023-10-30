@@ -11,6 +11,7 @@ module TicketAmount
     #
     def initialize(cli)
       @cli = cli
+      @error_message = '入力値に誤りがあります。再入力してください。'
     end
 
     #
@@ -32,12 +33,12 @@ module TicketAmount
     #
     def _input_adult_ticket_count(cli)
       prompt = 'チケット枚数(大人) [数字]:'
-      error_message = '入力値に誤りがあります。再入力してください。(コマンド終了: Q|q)'
       input = cli.ask(prompt)
-      until input =~ /^[1-9]\d*$/
-        cli.say(error_message)
+      cli.send(:exit, 0) if input.downcase == 'q'
+      until input =~ /^(0)|([1-9]\d*)$/
+        cli.say(@error_message)
         input = cli.ask(prompt)
-        cli.exit(0) if input.downcase == 'q'
+        cli.send(:exit, 0) if input.downcase == 'q'
       end
       input
     end
@@ -50,12 +51,12 @@ module TicketAmount
     #
     def _input_child_ticket_count(cli)
       prompt = 'チケット枚数(子供) [数字]:'
-      error_message = '入力値に誤りがあります。再入力してください。(コマンド終了: Q|q)'
       input = cli.ask(prompt)
-      until input =~ /^[1-9]\d*$/
-        cli.say(error_message)
+      cli.send(:exit, 0) if input.downcase == 'q'
+      until input =~ /^(0)|([1-9]\d*)$/
+        cli.say(@error_message)
         input = cli.ask(prompt)
-        cli.exit(0) if input.downcase == 'q'
+        cli.send(:exit, 0) if input.downcase == 'q'
       end
       input
     end
@@ -68,12 +69,12 @@ module TicketAmount
     #
     def _input_senior_ticket_count(cli)
       prompt = 'チケット枚数(シニア) [数字]:'
-      error_message = '入力値に誤りがあります。再入力してください。(コマンド終了: Q|q)'
       input = cli.ask(prompt)
-      until input =~ /^[1-9]\d*$/
-        cli.say(error_message)
+      cli.send(:exit, 0) if input.downcase == 'q'
+      until input =~ /^(0)|([1-9]\d*)$/
+        cli.say(@error_message)
         input = cli.ask(prompt)
-        cli.exit(0) if input.downcase == 'q'
+        cli.send(:exit, 0) if input.downcase == 'q'
       end
       input
     end
@@ -94,12 +95,12 @@ module TicketAmount
 
 特別条件 [数字(複数入力可)]:
       PROMPT
-      error_message = '入力値に誤りがあります。再入力してください。(コマンド終了: Q|q)'
       input = cli.ask(prompt)
+      cli.send(:exit, 0) if input.downcase == 'q'
       until self._valid_special_conditions(input)
-        cli.say(error_message)
+        cli.say(@error_message)
         input = cli.ask(prompt)
-        cli.exit(0) if input.downcase == 'q'
+        cli.send(:exit, 0) if input.downcase == 'q'
       end
       values
     end
