@@ -42,5 +42,7 @@ RUN ["apt-get", "update"]
 RUN ["apt-get", "install", "-y", "vim"]
 
 # bundle install
-RUN gem update bundler
-RUN bundle install
+ENV BUNDLER_VERSION=2.4.12
+RUN gem update --system \
+    && gem install bundler --no-document -v $BUNDLER_VERSION \
+    && bundle install -j 4
