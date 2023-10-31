@@ -29,8 +29,10 @@ module TicketAmount
       end
     end
 
+    default_command :calculate
     desc 'calculate', 'チケットの販売金額を計算します。'
     method_option :type,
+      aliases: 't',
       type: :numeric,
       desc: '販売種別',
       enum: TicketType::all,
