@@ -10,16 +10,61 @@ module TicketAmount
     include TicketAmountConst
 
     #
+    # チケット枚数情報を構築します。
+    # @param adult_count [Integer] チケット枚数（大人）
+    # @param child_count [Integer] チケット枚数（子供）
+    # @param senior_count [Integer] チケット枚数（シニア）
+    # @return [Hash<Symbol>] チケット枚数情報
+    #
+    def build_ticket_counts(adult_count, child_count, senior_count)
+      {
+        adult: adult_count,
+        child: child_count,
+        senior: senior_count
+      }
+    end
+
+    #
     # チケットの合計金額を算出します。
     # @param ticket_type [Integer] チケット種別
-    # @param ticket_counts [Hash<Symbol>] チケット枚数情報
+    # @param ticket_count_hash [Hash<Symbol>] チケット枚数情報
     # @return [Integer,BigDecimal] 合計金額
     #
-    def calc_total_amount(ticket_type, ticket_counts)
-      adult, child, senior = self._parse_ticket_counts(ticket_counts)
+    def calc_total_amount(ticket_type, ticket_count_hash)
+      adult, child, senior = self._parse_ticket_hash(ticket_count_hash)
       self.calc_adult_ticket_amount(ticket_type, adult) +
         self.calc_child_ticket_amount(ticket_type, child) +
         self.calc_senior_ticket_amount(ticket_type, senior)
+    end
+
+    #
+    # チケット(シニア)の合計金額を算出します。
+    # @param type [Integer] チケット種別
+    # @param count [Integer] チケット枚数
+    # @return [Integer,BigDecimal] 合計金額
+    #
+    def calc_senior_ticket_amount(type, count)
+      self.senior_ticket_price(type) * count
+    end
+
+    #
+    # チケット(大人)の合計金額を算出します。
+    # @param type [Integer] チケット種別
+    # @param count [Integer] チケット枚数
+    # @return [Integer,BigDecimal] 合計金額
+    #
+    def calc_adult_ticket_amount(type, count)
+      self.adult_ticket_price(type) * count
+    end
+
+    #
+    # チケット(子供)の合計金額を算出します。
+    # @param type [Integer] チケット種別
+    # @param count [Integer] チケット枚数
+    # @return [Integer,BigDecimal] 合計金額
+    #
+    def calc_child_ticket_amount(type, count)
+      self.child_ticket_price(type) * count
     end
 
     #
@@ -36,16 +81,6 @@ module TicketAmount
     end
 
     #
-    # チケット(大人)の合計金額を算出します。
-    # @param type [Integer] チケット種別
-    # @param count [Integer] チケット枚数
-    # @return [Integer,BigDecimal] 合計金額
-    #
-    def calc_adult_ticket_amount(type, count)
-      self.adult_ticket_price(type) * count
-    end
-
-    #
     # チケット(子供)の単価を取得します。
     # @param type [Integer] チケット種別
     # @return [Integer,BigDecimal] 単価
@@ -59,16 +94,6 @@ module TicketAmount
     end
 
     #
-    # チケット(子供)の合計金額を算出します。
-    # @param type [Integer] チケット種別
-    # @param count [Integer] チケット枚数
-    # @return [Integer,BigDecimal] 合計金額
-    #
-    def calc_child_ticket_amount(type, count)
-      self.child_ticket_price(type) * count
-    end
-
-    #
     # チケット(シニア)の単価を取得します。
     # @param type [Integer] チケット種別
     # @return [Integer,BigDecimal] チケット単価
@@ -79,16 +104,6 @@ module TicketAmount
       else
         SENIOR_TICKET_PRICE
       end
-    end
-
-    #
-    # チケット(シニア)の合計金額を算出します。
-    # @param type [Integer] チケット種別
-    # @param count [Integer] チケット枚数
-    # @return [Integer,BigDecimal] 合計金額
-    #
-    def calc_senior_ticket_amount(type, count)
-      self.senior_ticket_price(type) * count
     end
 
     #
@@ -145,53 +160,38 @@ module TicketAmount
 
     #
     # 団体割引であるかを判定します。
-    # @param ticket_counts [Hash<Symbol>] チケット枚数情報
+    # @param ticket_count_hash [Hash<Symbol>] チケット枚数情報
     # @return true 団体割引である, false 団体割引ではない
     #
-    def group_discount?(ticket_counts)
-      adult, child, senior = self._parse_ticket_counts(ticket_counts)
+    def group_discount?(ticket_count_hash)
+      adult, child, senior = self._parse_ticket_hash(ticket_count_hash)
       ticket_total_count = adult + (child * CHILD_TICKET_WEIGHT) + senior
       ticket_total_count.floor >= GROUP_DISCOUNT_THRESHOLD
-    end
-
-    #
-    # チケット枚数情報を構築します。
-    # @param adult_count [Integer] チケット枚数（大人）
-    # @param child_count [Integer] チケット枚数（子供）
-    # @param senior_count [Integer] チケット枚数（シニア）
-    # @return [Hash<Symbol>] チケット枚数情報
-    #
-    def build_ticket_counts(adult_count, child_count, senior_count)
-      {
-        adult: adult_count,
-        child: child_count,
-        senior: senior_count
-      }
     end
 
     private
     #
     # チケット枚数情報を解析します。
-    # @param ticket_counts [Hash<Symbol>] チケット枚数情報
+    # @param ticket_count_hash [Hash<Symbol>] チケット枚数情報
     # @return [Array<Integer>] 解析後のチケット枚数情報
     # @private
     #
-    def _parse_ticket_counts(ticket_counts)
+    def _parse_ticket_hash(ticket_count_hash)
       [
-        ticket_counts.fetch(:adult, 0).to_i,
-        ticket_counts.fetch(:child, 0).to_i,
-        ticket_counts.fetch(:senior, 0).to_i
+        ticket_count_hash.fetch(:adult, 0).to_i,
+        ticket_count_hash.fetch(:child, 0).to_i,
+        ticket_count_hash.fetch(:senior, 0).to_i
       ]
     end
 
     #
     # チケット枚数の合計を算出します。
-    # @param ticket_counts [Hash<Symbol>] チケット枚数情報
+    # @param ticket_count_hash [Hash<Symbol>] チケット枚数情報
     # @return [Integer] チケット枚数の合計
     # @private
     #
-    def _calc_ticket_total_count(ticket_counts)
-        adult, child, senior = self._parse_ticket_counts(ticket_counts)
+    def _calc_ticket_total_count(ticket_count_hash)
+        adult, child, senior = self._parse_ticket_hash(ticket_count_hash)
         adult + child + senior
     end
   end
