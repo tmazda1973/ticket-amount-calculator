@@ -32,8 +32,8 @@ module TicketAmount
     # @return [Integer,BigDecimal] 金額変更前合計金額
     #
     def value
-      ticket_counts = self.build_ticket_counts(@adult_count, @child_count, @senior_count)
-      self.calc_total_amount(@ticket_type, ticket_counts)
+      ticket_count_holder = self.build_ticket_count_holder(@adult_count, @child_count, @senior_count)
+      self.calc_total_amount(@ticket_type, ticket_count_holder)
     end
   end
 end
