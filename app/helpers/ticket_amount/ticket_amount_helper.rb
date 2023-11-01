@@ -109,9 +109,9 @@ module TicketAmount
     # @return [Integer,BigDecimal] 適用後の合計金額
     #
     def change_amount_by_special(total_amount, special_conditions, ticket_count_holder)
-      _total_amount = self.apply_group_discount(total_amount, ticket_count_holder) # 団体割引
-      self.apply_special_conditions(_total_amount, special_conditions, ticket_count_holder) # 特別条件
-      _total_amount
+      _total_amount = total_amount
+      _total_amount = self.apply_special_conditions(_total_amount, special_conditions, ticket_count_holder) # 特別条件
+      self.apply_group_discount(_total_amount, ticket_count_holder) # 団体割引
     end
 
     #

@@ -5,6 +5,17 @@ module TicketAmount
   # CLIからの入力を制御するクラスです。
   #
   class InputReceiptOperator
+    PROMPT_ADULT_COUNT  = 'チケット枚数(大人)   [数字] >'.freeze
+    PROMPT_CHILD_COUNT  = 'チケット枚数(子供)   [数字] >'.freeze
+    PROMPT_SENIOR_COUNT = 'チケット枚数(シニア) [数字] >'.freeze
+    USAGE_SPECIAL_CONDITIONS = <<-USAGE.freeze
+特別条件を入力してください。カンマ区切りで複数入力できます。(例: 1,2,3)
+  1: 夕方料金
+  2: 休日料金
+  3: 月水割引
+    USAGE
+    PROMPT_SPECIAL_CONDITIONS = '特別条件 [数字(複数入力可)] >'.freeze
+
     #
     # コンストラクタ
     # @param cli [Thor] コマンドラインインターフェース
@@ -32,12 +43,11 @@ module TicketAmount
     # @private
     #
     def _input_adult_ticket_count(cli)
-      prompt = 'チケット枚数(大人) [数字]:'
-      input = cli.ask(prompt)
+      input = cli.ask(PROMPT_ADULT_COUNT)
       cli.send(:exit, 0) if input.downcase == 'q'
       until input =~ /^(0)|([1-9]\d*)$/
         cli.say(@error_message)
-        input = cli.ask(prompt)
+        input = cli.ask(PROMPT_ADULT_COUNT)
         cli.send(:exit, 0) if input.downcase == 'q'
       end
       input.to_i
@@ -50,12 +60,11 @@ module TicketAmount
     # @private
     #
     def _input_child_ticket_count(cli)
-      prompt = 'チケット枚数(子供) [数字]:'
-      input = cli.ask(prompt)
+      input = cli.ask(PROMPT_CHILD_COUNT)
       cli.send(:exit, 0) if input.downcase == 'q'
       until input =~ /^(0)|([1-9]\d*)$/
         cli.say(@error_message)
-        input = cli.ask(prompt)
+        input = cli.ask(PROMPT_CHILD_COUNT)
         cli.send(:exit, 0) if input.downcase == 'q'
       end
       input.to_i
@@ -68,12 +77,11 @@ module TicketAmount
     # @private
     #
     def _input_senior_ticket_count(cli)
-      prompt = 'チケット枚数(シニア) [数字]:'
-      input = cli.ask(prompt)
+      input = cli.ask(PROMPT_SENIOR_COUNT)
       cli.send(:exit, 0) if input.downcase == 'q'
       until input =~ /^(0)|([1-9]\d*)$/
         cli.say(@error_message)
-        input = cli.ask(prompt)
+        input = cli.ask(PROMPT_SENIOR_COUNT)
         cli.send(:exit, 0) if input.downcase == 'q'
       end
       input.to_i
@@ -86,22 +94,16 @@ module TicketAmount
     # @private
     #
     def _input_special_conditions(cli)
-      prompt = <<-PROMPT
-特別条件を入力してください。カンマ区切りで複数入力できます。(例: 1,2,3)
-  1: 夕方料金
-  2: 休日料金
-  3: 月水割引
-
-特別条件 [数字(複数入力可)]:
-      PROMPT
-      input = cli.ask(prompt)
+      cli.say(USAGE_SPECIAL_CONDITIONS)
+      input = cli.ask(PROMPT_SPECIAL_CONDITIONS)
       cli.send(:exit, 0) if input.downcase == 'q'
       until self._valid_special_conditions(input)
         cli.say(@error_message)
-        input = cli.ask(prompt)
+        cli.say(USAGE_SPECIAL_CONDITIONS)
+        input = cli.ask(PROMPT_SPECIAL_CONDITIONS)
         cli.send(:exit, 0) if input.downcase == 'q'
       end
-      input.split(',').map(&:to_i)
+      input.split(',').map(&:to_i).uniq.sort
     end
 
     #
@@ -113,7 +115,8 @@ module TicketAmount
     def _valid_special_conditions(input)
       allow_values = SpecialCondition.all # 許可する入力値
       input.split(',').each do |value|
-        return false unless value =~ /^(0)|([1-9]\d*)$/
+        return false if value.nil? || value.empty?
+        return false unless value =~ /^(0|[1-9]\d*)$/
         return false unless allow_values.include?(value.to_i)
       end
       true
