@@ -159,27 +159,15 @@ module TicketAmount
     # @return true 団体割引である, false 団体割引ではない
     #
     def group_discount?(ticket_count_holder)
-      ticket_total_count = ticket_count_holder.adult \
-        + (ticket_count_holder.child * CHILD_TICKET_WEIGHT) \
-        + ticket_count_holder.senior
+      ticket_total_count = [
+        ticket_count_holder.adult,
+        (ticket_count_holder.child * CHILD_TICKET_WEIGHT),
+        ticket_count_holder.senior
+      ].sum
       ticket_total_count.floor >= GROUP_DISCOUNT_THRESHOLD
     end
 
     private
-    #
-    # チケット枚数情報を解析します。
-    # @param ticket_count_hash [Hash<Symbol>] チケット枚数情報
-    # @return [Array<Integer>] 解析後のチケット枚数情報
-    # @private
-    #
-    def _parse_ticket_hash(ticket_count_hash)
-      [
-        ticket_count_hash.fetch(:adult, 0).to_i,
-        ticket_count_hash.fetch(:child, 0).to_i,
-        ticket_count_hash.fetch(:senior, 0).to_i
-      ]
-    end
-
     #
     # チケット枚数の合計を算出します。
     # @param ticket_count_holder [TicketCountHolder] チケット枚数ホルダー
@@ -187,7 +175,11 @@ module TicketAmount
     # @private
     #
     def _calc_ticket_total_count(ticket_count_holder)
-      ticket_count_holder.adult + ticket_count_holder.child + ticket_count_holder.senior
+      [
+        ticket_count_holder.adult,
+        ticket_count_holder.child,
+        ticket_count_holder.senior
+      ].sum
     end
 
     #
