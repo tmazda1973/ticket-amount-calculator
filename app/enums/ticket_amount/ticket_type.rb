@@ -25,7 +25,7 @@ module TicketAmount
 
       #
       # 列挙値の論理名を取得します。
-      # @param [Integer] value 列挙値
+      # @param [TicketType,Integer] value 列挙値
       # @return [String] 論理名
       # @classmethod
       #

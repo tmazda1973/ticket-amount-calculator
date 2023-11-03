@@ -1,11 +1,13 @@
 require_relative '../app_presenter'
 require_relative '../../helpers/ticket_amount/ticket_amount_helper'
+require_relative '../../helpers/cli_helper'
 
 module TicketAmount
   #
   # チケットの販売金額を計算するアクションのプレゼンターです。
   #
   class CalculatePresenter < AppPresenter
+    include CLIHelper
     include TicketAmountHelper
 
     attr_accessor \
@@ -45,7 +47,9 @@ module TicketAmount
       @cli.say(" #{total_amount_hash[:after]} 円")
       @cli.say("")
       @cli.say("金額変更明細：")
-      @cli.say("#{self.change_amount_detail}") if (!self.change_amount_detail.nil? && !self.change_amount_detail.empty?)
+      self.change_amount_detail.each do |detail|
+        @cli.say(" - #{detail}")
+      end
       @cli.echo_hr
     end
 
