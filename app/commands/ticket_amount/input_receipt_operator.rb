@@ -27,6 +27,11 @@ module TicketAmount
 
     #
     # 処理を開始します。
+    # - 次の入力を受け付けます。
+    #   - チケット枚数（大人）
+    #   - チケット枚数（子供）
+    #   - チケット枚数（シニア）
+    #   - 特別条件
     #
     def start
       @cli.adult_ticket_count = self._input_adult_ticket_count(@cli)
