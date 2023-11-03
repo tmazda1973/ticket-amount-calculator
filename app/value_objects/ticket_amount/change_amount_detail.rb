@@ -1,4 +1,4 @@
-require_relative './ticket_amount_const'
+require_relative '../../constants/ticket_amount/ticket_amount_const'
 require_relative '../../enums/ticket_amount/ticket_type'
 require_relative '../../enums/ticket_amount/special_condition'
 
@@ -33,11 +33,11 @@ module TicketAmount
 
     #
     # 金額変更明細を取得します。
-    # @return [String] 金額変更明細
+    # @return [Array<String>] 金額変更明細
     #
     def value
       # TODO: 実装する
-      ''
+      []
     end
   end
 end

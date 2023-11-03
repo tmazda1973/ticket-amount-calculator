@@ -1,4 +1,4 @@
-require_relative '../../value_objects/ticket_amount/ticket_amount_const'
+require_relative '../../constants//ticket_amount/ticket_amount_const'
 require_relative '../../enums/ticket_amount/ticket_type'
 require_relative '../../enums/ticket_amount/special_condition'
 

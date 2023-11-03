@@ -3,7 +3,7 @@ require_relative '../../helpers/ticket_amount/ticket_amount_helper'
 
 module TicketAmount
   #
-  # チケットの販売金額を計算するプレゼンターです。
+  # チケットの販売金額を計算するアクションのプレゼンターです。
   #
   class CalculatePresenter < AppPresenter
     include TicketAmountHelper
@@ -15,7 +15,7 @@ module TicketAmount
       :senior_ticket_count, # チケット枚数（シニア）
       :special_conditions, # 特別条件
       :total_amount, # 販売合計金額
-      :before_change_total_amount, # 金額変更前合計金額
+      :before_total_amount, # 変更前合計金額
       :change_amount_detail # 金額変更明細
 
     #
@@ -26,20 +26,20 @@ module TicketAmount
       @cli = cli
     end
 
-    # @implements AppPresenter#output
+    # @see AppPresenter#output
     def output
       # 出力用の値を構築する
       price_hash = self._build_output_price(self.ticket_type) # 単価
       count_hash = self._build_output_count(self.adult_ticket_count, self.child_ticket_count, self.senior_ticket_count) # 枚数
       amount_hash = self._build_output_amount(self.ticket_type, self.adult_ticket_count, self.child_ticket_count, self.senior_ticket_count) # 合計金額
-      total_amount_hash = self._build_output_total_amount(self.before_change_total_amount, self.total_amount) # 合計金額
+      total_amount_hash = self._build_output_total_amount(self.before_total_amount, self.total_amount) # 合計金額
       # 計算結果を出力する
       @cli.echo_hr
       @cli.say("大人  ：#{price_hash[:adult]} 円 x #{count_hash[:adult]} 枚 = #{amount_hash[:adult]} 円")
       @cli.say("子供  ：#{price_hash[:child]} 円 x #{count_hash[:child]} 枚 = #{amount_hash[:child]} 円")
       @cli.say("シニア：#{price_hash[:senior]} 円 x #{count_hash[:senior]} 枚 = #{amount_hash[:senior]} 円")
       @cli.say("")
-      @cli.say("金額変更前合計金額：")
+      @cli.say("変更前合計金額：")
       @cli.say(" #{total_amount_hash[:before]} 円")
       @cli.say("販売合計金額：")
       @cli.say(" #{total_amount_hash[:after]} 円")
@@ -52,7 +52,7 @@ module TicketAmount
     private
     #
     # 出力用の合計金額情報を構築します。
-    # @param before_amount [Integer,BigDecimal] 金額変更前合計金額
+    # @param before_amount [Integer,BigDecimal] 変更前合計金額
     # @param after_amount [Integer,BigDecimal] 販売合計金額
     # @return [Hash<Symbol>] 出力用の合計金額情報
     # @private

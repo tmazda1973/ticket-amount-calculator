@@ -3,9 +3,9 @@ require_relative '../../helpers/ticket_amount/ticket_amount_helper'
 
 module TicketAmount
   #
-  # 金額変更前合計金額の値オブジェクトです。
+  # 変更前合計金額の値オブジェクトです。
   #
-  class BeforeChangeTotalAmount
+  class BeforeTotalAmount
     include TicketAmountHelper
 
     #

@@ -10,7 +10,7 @@ class AppPresenter
   # @abstract
   #
   def output
-    raise NotImplementedError, 'You must implement the output method'
+    raise NotImplementedError, 'This method must be implemented in child classes'
   end
 
   #
@@ -21,5 +21,4 @@ class AppPresenter
   def number_format(number)
     number.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\1,').reverse
   end
-
 end
