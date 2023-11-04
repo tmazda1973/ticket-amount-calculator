@@ -44,7 +44,10 @@ module TicketAmount
       self.echo_hr
       self.say("チケットの販売金額を計算します。")
       self.say("")
-      self.say("販売種別を指定する場合、[--type=1:通常, 2:特別] を指定してください。（デフォルト: 1:通常）")
+      self.say("販売種別を指定する場合、[-t 1:通常, 2:特別] を指定してください。（デフォルト: 1:通常）")
+      self.say("Usage:")
+      self.say("  exe/ticket_amount.rb [-t 1:通常, 2:特別]")
+      self.say("")
       self.say("(中断: [Q|q])")
       self.echo_hr
       self.say("販売種別: #{TicketType::name(presenter.ticket_type)}")
