@@ -101,21 +101,9 @@ module TicketAmount
     # @private
     #
     def _build_special_detail(total_count)
-      evening = self._build_change_amount_detail(
-        SpecialCondition::EVENING,
-        total_count,
-        TicketAmountConst::EVENING_DISCOUNT_PRICE
-      ) # 夕方料金
-      holiday = self._build_change_amount_detail(
-        SpecialCondition::HOLIDAY,
-        total_count,
-        TicketAmountConst::HOLIDAY_EXTRA_PRICE
-      ) # 休日料金
-      mon_wed = self._build_change_amount_detail(
-        SpecialCondition::MON_WED,
-        total_count,
-        TicketAmountConst::MON_WED_DISCOUNT_PRICE
-      ) # 月水割引
+      evening = self._build_change_amount_detail(SpecialCondition::EVENING, total_count, EVENING_DISCOUNT_PRICE) # 夕方料金
+      holiday = self._build_change_amount_detail(SpecialCondition::HOLIDAY, total_count, HOLIDAY_EXTRA_PRICE) # 休日料金
+      mon_wed = self._build_change_amount_detail(SpecialCondition::MON_WED, total_count, MON_WED_DISCOUNT_PRICE) # 月水割引
       {
         evening: evening,
         holiday: holiday,
