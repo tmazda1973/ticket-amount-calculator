@@ -3,7 +3,6 @@ TARGET_LIST=$(shell egrep -o ^[a-zA-Z_-]+: $(MAKEFILE_LIST) | sed 's/://')
 .SILENT: $(TARGET_LIST)
 
 CTN_APP := app # コンテナ名（アプリ）
-CTN_DB := app_db # コンテナ名（DB）
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -38,23 +37,8 @@ down-app: ## docker-compose down app
 rm-app:## docker-compose rm -fsv app
 	@docker-compose rm -fsv $(CTN_APP)
 
-rm-db:## docker-compose rm -fsv app_db
-	@docker-compose rm -fsv $(CTN_DB)
-
 bash-app: ## docker-compose run --rm app /bin/bash
 	@docker-compose run --rm $(CTN_APP) /bin/bash
 
-bash-db: ## docker-compose run --rm app_db /bin/bash
-	@docker-compose run --rm $(CTN_DB) /bin/bash
-
 exec-bash-app: ## docker-compose exec app /bin/bash
 	@docker-compose exec $(CTN_APP) /bin/bash
-
-exec-bash-db: ## docker-compose exec app_db /bin/bash
-	@docker-compose exec $(CTN_DB) /bin/bash
-
-db-create: ## rails db:create
-	@docker-compose run --rm $(CTN_APP) rails db:create
-
-migrate: ## rails db:migrate
-	@docker-compose run --rm $(CTN_APP) rails db:migrate

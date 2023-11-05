@@ -3,8 +3,8 @@ version: '3.4'
 services:
   app:
     build:
-      context: ./
-      dockerfile: ./app/Dockerfile
+      context: ../app
+      dockerfile: ../docker/app/Dockerfile
     container_name: app
     tty: true
     stdin_open: true
@@ -12,17 +12,3 @@ services:
       - app.env
     volumes:
       - ../app:/app
-    depends_on:
-      - app_db
-  app_db:
-    image: postgres:13
-    container_name: app-postgres
-    ports:
-      - "5432:5432"
-    env_file:
-      - app.env
-    volumes:
-      - db-volume:/var/lib/postgresql/data
-
-volumes:
-  db-volume:
