@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-BUNDLER_VERSION=2.4.12
+BUNDLER_VERSION=2.3.26
 gem update --system
 gem install bundler -v ${BUNDLER_VERSION}
 bundle install --jobs=4
