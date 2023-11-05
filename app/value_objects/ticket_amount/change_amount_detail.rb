@@ -2,7 +2,7 @@ require_relative '../../constants/ticket_amount/ticket_amount_const'
 require_relative '../../enums/ticket_amount/ticket_type'
 require_relative '../../enums/ticket_amount/special_condition'
 require_relative '../../helpers/ticket_amount/ticket_amount_helper'
-require_relative '../../helpers/cli_helper'
+require_relative '../../helpers/string_helper'
 
 module TicketAmount
   #
@@ -10,8 +10,8 @@ module TicketAmount
   #
   class ChangeAmountDetail
     include TicketAmountConst
-    include CLIHelper
     include TicketAmountHelper
+    include StringHelper
 
     #
     # コンストラクタ

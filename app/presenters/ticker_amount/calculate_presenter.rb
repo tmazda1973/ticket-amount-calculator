@@ -1,6 +1,7 @@
 require_relative '../app_presenter'
 require_relative '../../helpers/ticket_amount/ticket_amount_helper'
 require_relative '../../helpers/cli_helper'
+require_relative '../../helpers/string_helper'
 
 module TicketAmount
   #
@@ -9,6 +10,7 @@ module TicketAmount
   class CalculatePresenter < AppPresenter
     include CLIHelper
     include TicketAmountHelper
+    include StringHelper
 
     attr_accessor \
       :ticket_type, # チケット種別
