@@ -19,7 +19,7 @@ module TicketAmount
     # @param [Integer] adult_ticket_count チケット枚数（大人）
     # @param [Integer] child_ticket_count チケット枚数（子供）
     # @param [Integer] senior_ticket_count チケット枚数（シニア）
-    # @param [Array<SpecialCondition>] special_conditions 特別条件
+    # @param [Array<SpecialCondition,Integer>] special_conditions 特別条件
     #
     def initialize(
       ticket_type: TicketType::NORMAL,
@@ -48,7 +48,7 @@ module TicketAmount
         details << '団体割引: 10％割引'
       end
       # 特別条件が適用されている
-      special = self._build_special_detail(total_count) # 特別条件の詳細データ
+      special = self._build_special_detail(@special_conditions, total_count) # 特別条件の詳細データ
       # 夕方料金
       if @special_conditions.include?(SpecialCondition::EVENING)
         _name = special[:evening][:name]
@@ -79,7 +79,7 @@ module TicketAmount
     private
     #
     # 金額変更明細データを構築します。
-    # @param special_condition [Integer,SpecialCondition] 特別条件
+    # @param special_condition [SpecialCondition,Integer] 特別条件
     # @param total_count [Integer] チケット枚数
     # @param price [Integer] 金額
     # @return [Hash<Symbol>] 金額変更明細データ
@@ -96,14 +96,30 @@ module TicketAmount
 
     #
     # 特別条件の詳細データを構築します。
+    # @param special_conditions [Array<SpecialCondition,Integer>] 特別条件
     # @param total_count [Integer] チケット枚数
     # @return [Hash<Symbol>] 特別条件の詳細データ
     # @private
     #
-    def _build_special_detail(total_count)
-      evening = self._build_change_amount_detail(SpecialCondition::EVENING, total_count, EVENING_DISCOUNT_PRICE) # 夕方料金
-      holiday = self._build_change_amount_detail(SpecialCondition::HOLIDAY, total_count, HOLIDAY_EXTRA_PRICE) # 休日料金
-      mon_wed = self._build_change_amount_detail(SpecialCondition::MON_WED, total_count, MON_WED_DISCOUNT_PRICE) # 月水割引
+    def _build_special_detail(special_conditions, total_count)
+      # 夕方料金
+      if special_conditions.include?(SpecialCondition::EVENING)
+        evening = self._build_change_amount_detail(SpecialCondition::EVENING, total_count, EVENING_DISCOUNT_PRICE)
+      else
+        evening = self._build_change_amount_detail(SpecialCondition::EVENING, 0, 0)
+      end
+      # 休日料金
+      if special_conditions.include?(SpecialCondition::HOLIDAY)
+        holiday = self._build_change_amount_detail(SpecialCondition::HOLIDAY, total_count, HOLIDAY_EXTRA_PRICE)
+      else
+        holiday = self._build_change_amount_detail(SpecialCondition::HOLIDAY, 0, 0)
+      end
+      # 月水割引
+      if special_conditions.include?(SpecialCondition::MON_WED)
+        mon_wed = self._build_change_amount_detail(SpecialCondition::MON_WED, total_count, MON_WED_DISCOUNT_PRICE)
+      else
+        mon_wed = self._build_change_amount_detail(SpecialCondition::MON_WED, 0, 0)
+      end
       {
         evening: evening,
         holiday: holiday,
