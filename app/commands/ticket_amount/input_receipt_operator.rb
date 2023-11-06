@@ -5,6 +5,8 @@ module TicketAmount
   # CLIからの入力を制御するクラスです。
   #
   class InputReceiptOperator
+    REGEX_NUMBER = /^0$|^[1-9]\d*$/.freeze # 正規表現（数字）
+
     PROMPT_ADULT_COUNT  = 'チケット枚数(大人)   [数字] >'.freeze
     PROMPT_CHILD_COUNT  = 'チケット枚数(子供)   [数字] >'.freeze
     PROMPT_SENIOR_COUNT = 'チケット枚数(シニア) [数字] >'.freeze
@@ -50,7 +52,7 @@ module TicketAmount
     def _input_adult_ticket_count(cli)
       input = cli.ask(PROMPT_ADULT_COUNT)
       cli.send(:exit, 0) if input.downcase == 'q'
-      until input =~ /^(0)|([1-9]\d*)$/
+      until input =~ REGEX_NUMBER
         cli.say(@error_message)
         input = cli.ask(PROMPT_ADULT_COUNT)
         cli.send(:exit, 0) if input.downcase == 'q'
@@ -67,7 +69,7 @@ module TicketAmount
     def _input_child_ticket_count(cli)
       input = cli.ask(PROMPT_CHILD_COUNT)
       cli.send(:exit, 0) if input.downcase == 'q'
-      until input =~ /^(0)|([1-9]\d*)$/
+      until input =~ REGEX_NUMBER
         cli.say(@error_message)
         input = cli.ask(PROMPT_CHILD_COUNT)
         cli.send(:exit, 0) if input.downcase == 'q'
@@ -84,7 +86,7 @@ module TicketAmount
     def _input_senior_ticket_count(cli)
       input = cli.ask(PROMPT_SENIOR_COUNT)
       cli.send(:exit, 0) if input.downcase == 'q'
-      until input =~ /^(0)|([1-9]\d*)$/
+      until input =~ REGEX_NUMBER
         cli.say(@error_message)
         input = cli.ask(PROMPT_SENIOR_COUNT)
         cli.send(:exit, 0) if input.downcase == 'q'
@@ -121,7 +123,7 @@ module TicketAmount
       allow_values = SpecialCondition.all # 許可する入力値
       input.split(',').each do |value|
         return false if value.nil? || value.empty?
-        return false unless value =~ /^(0|[1-9]\d*)$/
+        return false unless value =~ REGEX_NUMBER
         return false unless allow_values.include?(value.to_i)
       end
       true
